@@ -6,7 +6,31 @@ import Thumb from '../../../Thumb';
 import { formatPrice } from '../../../../services/util';
 import { addProduct } from '../../../../services/cart/actions';
 
-const Product = ({ product, addProduct }) => {
+import Swal from 'sweetalert2';
+
+const Product = ({ product, addProduct, cartProducts }) => {
+
+  const addProducts = (producto) => {
+    if(cartProducts.length  >= 5 ) {
+      Swal.fire('¡No se Puede agregar más de 5 productos a tu carro de compras!', '', 'error')
+      return;
+    }
+    Swal.fire({
+      title: '¿Estas Seguro?',
+      text: "De agregaar este producto al caarrito de compras!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, agregarlo!'
+    }).then((result) => {
+      if (result.value) {
+       addProduct(producto)
+      }
+    })
+    
+  }
+ 
   product.quantity = 1;
 
   let formattedPrice = formatPrice(product.price, product.currencyId);
@@ -30,11 +54,15 @@ const Product = ({ product, addProduct }) => {
   return (
     <div
       className="shelf-item"
-      onClick={() => addProduct(product)}
+      onClick={() => addProducts(product)}
+      // onClick={() => addProduct(product)}
       data-sku={product.sku}
     >
       {product.isFreeShipping && (
-        <div className="shelf-stopper">Free shipping</div>
+        <div className="shelf-stopper">
+          envío Gratis
+           <i className="fas fa-tags"> </i>
+          </div>
       )}
       <Thumb
         classes="shelf-item__thumb"
@@ -44,13 +72,15 @@ const Product = ({ product, addProduct }) => {
       <p className="shelf-item__title">{product.title}</p>
       <div className="shelf-item__price">
         <div className="val">
-          <small>{product.currencyFormat}</small>
-          <b>{formattedPrice.substr(0, formattedPrice.length - 3)}</b>
-          <span>{formattedPrice.substr(formattedPrice.length - 3, 3)}</span>
+          { product.promoPrice ? 
+          <div>
+          <p className="price-discount" > $ {product.price}</p>
+          <b>$ {product.promoPrice}</b>
+         </div> : <strong> $ {product.price}</strong>}
         </div>
         {productInstallment}
       </div>
-      <div className="shelf-item__buy-btn">Add to cart</div>
+      <div className="shelf-item__buy-btn">Agregar a Carro de Compras</div>
     </div>
   );
 };
@@ -60,7 +90,13 @@ Product.propTypes = {
   addProduct: PropTypes.func.isRequired
 };
 
+function mapState (state) {
+  return {
+    cartProducts: state.cart.products
+  }
+} 
+
 export default connect(
-  null,
+  mapState,
   { addProduct }
 )(Product);

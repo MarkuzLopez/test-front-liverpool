@@ -52,14 +52,20 @@
       }
     }
 
+    .shelf-item__buy-btn { 
+      background-color: #e10098;
+      font-family: 'Roboto Mono', monospace;
+    }
+
     .shelf-stopper {
-      position: absolute;
+      position: absolutez;
       color: #ececec;
       top: 10px;
       right: 10px;
       padding: 5px;
       font-size: 0.6em;
       background-color: #1b1a20;
+      margin-right: 20px;
       cursor: default;
     }
 
@@ -87,12 +93,17 @@
     }
 
     &__price {
-      height: 60px;
+      height: auto;
+      
 
       .val {
         b {
           font-size: 1.5em;
           margin-left: 5px;
+        }
+        .price-discount {
+          text-decoration: line-through;
+          background-color: #d8d8d8;
         }
       }
 
